@@ -1,0 +1,15 @@
+{% extends bento_base_template %}
+{% block SETUP_BENTO_BASE_IMAGE %}
+{{ super() }}
+{% endblock %}
+
+{% set bento__user = "bentoml" %}
+{% set bento__home = "/home/" ~  bento__user %}
+{% set bento__path = "/home/" ~ bento__user ~ "/bento" %}
+{% set bento__uid_gid = 1000 %}  
+
+{% block SETUP_BENTO_COMPONENTS %}
+{{ super() }}
+{% endblock %}
+
+

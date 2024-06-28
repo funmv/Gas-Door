@@ -1,0 +1,15 @@
+service: "service:svc"
+include:
+- "*.py"
+python:
+    packages:
+    - torch
+    - torchvision
+    - Pillow
+    extra_index_url:
+    - "https://download.pytorch.org/whl/cu117"
+docker:
+    distro: debian
+    python_version: "3.9.15"
+    cuda_version: "11.6.2"
+    dockerfile_template: ./Dockerfile.template
