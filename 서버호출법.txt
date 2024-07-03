@@ -1,0 +1,5 @@
+> curl -X POST http://localhost:3010/predict_image -H "accept: application/json" -H "Content-Type: image/bmp" --data-binary "@data/image/frame_0042_part_2_time_19.60.jpg"
+
+-windows에서 호출할 때, POST, web주소 등은 따옴표 없고, 뒷부분은 큰 따옴표 필요.
+-YoloBento에서 파일명을 보낼 때는 -F "images=@apple.jpg;type=image/jpg" 이런식으로 -F 사용했음. 
+
