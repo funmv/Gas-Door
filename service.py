@@ -24,29 +24,38 @@ def timed_filename(time_str):
     
 def save_img(output, label):
     filename = timed_filename("%Y%m%d_%H%M%S")+'_'+label+'.jpg'
-    path_name = os.path.join(os.getcwd(),filename)
+    path_name = os.path.join(os.getcwd(), 'output')
+    if not os.path.exists(path_name):
+        os.makedirs(path_name)
+    path_name = os.path.join(path_name,filename)
     print(path_name)
     image = PILImage.fromarray(output)
     image.save(path_name)
     return filename
 
+def not_localhost(request_headers):
+    client_ip = request_headers['host'].split(':')[0]
+    print(request_headers['host'])
+    if client_ip not in ["127.0.0.1", "::1", "localhost"]:
+        return True
+    
+    return False
+
 
 @svc.api(input=Image(), output=JSON())
 async def predict_image(image: PILImage.Image, ctx: bentoml.Context) -> dict:
-    request_headers = ctx.request.headers
-    client_ip = request_headers['host'].split(':')[0]
-    print(request_headers['host'])
-    if client_ip not in ["127.0.0.1", "::1", 'localhost']:
-        return {}
+#     if not_localhost(ctx.request.headers):
+#         return {}
         
     image = PILImage.merge("RGB", image.split()[:3]) if image.mode.endswith('A') else image
     image = np.array(image)
     print(f"Input image size: {image.shape}")
-    out_lines, mask, line_img, patches, predictions, out_img, out_mask = await gasdoor_runner.async_run(image, eps=20, min_length=70)
+    out_lines, mask, line_img, patches, predictions = await gasdoor_runner.async_run(image, ctx, eps=20, min_length=70)
     try:
         filenaem = save_img(line_img, 'im') 
         filenaem = save_img(mask, 'mask') 
     except Exception as e:
         print(f"Exception in saving Images: {e}")
 
-    return {'hough': out_lines, 'image': out_img, 'mask': out_mask}
+    # return {'hough': out_lines, 'image': out_img, 'mask': out_mask}
+    return {'hough': out_lines}
